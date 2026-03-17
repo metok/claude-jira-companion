@@ -1,0 +1,4 @@
+node_modules/
+.claude-jira/
+*.local
+dist/
