@@ -1,0 +1,13 @@
+{
+  "name": "claude-jira-companion-marketplace",
+  "description": "Jira Cloud companion plugin marketplace",
+  "owner": { "name": "metok" },
+  "plugins": [
+    {
+      "name": "claude-jira-companion",
+      "description": "Jira Cloud companion for Claude Code",
+      "version": "0.1.0",
+      "source": "./"
+    }
+  ]
+}

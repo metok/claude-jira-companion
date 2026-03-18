@@ -1,0 +1,13 @@
+{
+  "name": "claude-jira-companion",
+  "description": "Jira Cloud companion for Claude Code: sprint overview at session start, ticket management, and transparent Jira updates",
+  "version": "0.1.0",
+  "author": {
+    "name": "metok",
+    "email": ""
+  },
+  "homepage": "https://github.com/metok/claude-jira-companion",
+  "repository": "https://github.com/metok/claude-jira-companion",
+  "license": "MIT",
+  "keywords": ["jira", "sprint", "tickets", "project-management", "workflow"]
+}
