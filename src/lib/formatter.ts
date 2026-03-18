@@ -65,3 +65,12 @@ export function parseDuration(input: string): number {
   const minutes = minMatch ? parseInt(minMatch[1]) : 0;
   return (hours * 3600) + (minutes * 60);
 }
+
+/** Extracts the active or latest sprint name from a Jira issue's fields */
+export function getSprintName(fields: unknown): string {
+  const f = fields as Record<string, unknown>;
+  const sprints = f?.sprint as Array<Record<string, unknown>> | undefined;
+  if (!sprints || sprints.length === 0) return "";
+  const active = sprints.find(s => s.state === "active") ?? sprints[sprints.length - 1];
+  return (active?.name as string) ?? "";
+}

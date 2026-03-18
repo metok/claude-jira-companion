@@ -1,7 +1,7 @@
 import { getClient } from "../lib/jira-client.js";
 import { readConfig } from "../lib/config.js";
 import { getCurrentBranchTicket } from "../lib/ticket-detector.js";
-import { formatSprintTable } from "../lib/formatter.js";
+import { formatSprintTable, getSprintName } from "../lib/formatter.js";
 import type { TicketRow } from "../lib/formatter.js";
 
 export async function run(): Promise<void> {
@@ -44,12 +44,4 @@ export async function run(): Promise<void> {
   }
 
   console.log(lines.join("\n"));
-}
-
-function getSprintName(fields: unknown): string {
-  const f = fields as Record<string, unknown>;
-  const sprints = f?.sprint as Array<Record<string, unknown>> | undefined;
-  if (!sprints || sprints.length === 0) return "";
-  const active = sprints.find(s => s.state === "active") ?? sprints[sprints.length - 1];
-  return (active?.name as string) ?? "";
 }

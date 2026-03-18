@@ -28,7 +28,8 @@ emit_context() {
 }
 
 # Fast-path: if not configured, inject a gentle nudge and exit
-CONFIG_FILE="${HOME}/.claude-jira/config.json"
+CONFIG_DIR="${CLAUDE_JIRA_CONFIG_DIR:-${HOME}/.claude-jira}"
+CONFIG_FILE="${CONFIG_DIR}/config.json"
 if [ ! -f "$CONFIG_FILE" ]; then
   emit_context "<jira-companion>\nJira companion is not configured yet. Run /jira-setup to connect your Jira account.\n</jira-companion>"
   exit 0
