@@ -48,6 +48,18 @@ bun run "${CLAUDE_PLUGIN_ROOT}/src/cli.ts" ticket PROJ-123
 ```
 Shows: summary, status, priority, description, subtasks, comments, available transitions.
 
+### Analyze Ticket (Deep Context)
+```bash
+bun run "${CLAUDE_PLUGIN_ROOT}/src/cli.ts" analyze-ticket PROJ-123
+```
+Fetches full ticket details including description, **acceptance criteria** (parsed automatically), subtasks, recent comments, and available transitions. Run this when the user says "I'm working on PROJ-123" to load ticket context.
+
+### Get Session Suggestions
+```bash
+bun run "${CLAUDE_PLUGIN_ROOT}/src/cli.ts" suggest-updates --session $SESSION_ID
+```
+Generates a business-language suggestion batch based on this session's commits and the active ticket's acceptance criteria. The Stop hook calls this automatically — you can also run it on demand.
+
 ### Update Status
 ```bash
 bun run "${CLAUDE_PLUGIN_ROOT}/src/cli.ts" transition PROJ-123 --status "In Review"
@@ -83,3 +95,11 @@ When user says "update jira" or "sync to jira":
 4. Propose: comment + status change (+ time log if appropriate)
 5. Wait for approval
 6. Execute approved updates
+
+## Workflow: Starting Work on a Ticket
+
+When user says "I'm working on PROJ-123" or starts a session on a ticket branch:
+1. Run `analyze-ticket PROJ-123` to load full context
+2. Show the ticket summary and acceptance criteria to the user
+3. Suggest creating a branch: `git checkout -b PROJ-123-short-description`
+4. Optionally transition to "In Progress" (with confirmation)
