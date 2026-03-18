@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PLUGIN_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+
+escape_for_json() {
+  local s="$1"
+  s="${s//\\/\\\\}"
+  s="${s//\"/\\\"}"
+  s="${s//$'\n'/\\n}"
+  s="${s//$'\r'/\\r}"
+  s="${s//$'\t'/\\t}"
+  printf '%s' "$s"
+}
+
+emit_context() {
+  local context="$1"
+  local escaped
+  escaped=$(escape_for_json "$context")
+  if [ -n "${CURSOR_PLUGIN_ROOT:-}" ]; then
+    printf '{\n  "additional_context": "%s"\n}\n' "$escaped"
+  elif [ -n "${CLAUDE_PLUGIN_ROOT:-}" ]; then
+    printf '{\n  "hookSpecificOutput": {\n    "hookEventName": "SessionStart",\n    "additionalContext": "%s"\n  }\n}\n' "$escaped"
+  else
+    printf '{\n  "additional_context": "%s"\n}\n' "$escaped"
+  fi
+}
+
+# Fast-path: if not configured, inject a gentle nudge and exit
+CONFIG_FILE="${HOME}/.claude-jira/config.json"
+if [ ! -f "$CONFIG_FILE" ]; then
+  emit_context "<jira-companion>\nJira companion is not configured yet. Run /jira-setup to connect your Jira account.\n</jira-companion>"
+  exit 0
+fi
+
+# Fetch assigned sprint tickets
+TICKETS=$(bun run "${PLUGIN_ROOT}/src/cli.ts" my-tickets 2>/dev/null || echo "")
+
+if [ -z "$TICKETS" ]; then
+  exit 0
+fi
+
+emit_context "<jira-context>\n## Your Jira Sprint Tickets\n\n${TICKETS}\n\nUse /jira to manage tickets. Use /jira-setup to configure preferences.\n</jira-context>"
+
+exit 0
